@@ -314,7 +314,7 @@ class Parser:
         return expression
 
     def unary(self):
-        if self.match("!"):
+        if self.match("BANG") or self.match("MINUS"):
             operator = self.previous()
             right = self.unary()
             return UnaryExpression(operator, right)
