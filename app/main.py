@@ -6,6 +6,9 @@ def print_error(message):
     sys.stderr.write(f"{message}\n")
 
 
+ENVIRONMENT = {}
+
+
 class Token:
     def __init__(self, type, lexeme, literal, line):
         self.type = type
@@ -204,6 +207,9 @@ class ExpressionVisitor:
     def visit_grouping_expression(self, expression: "GroupingExpression"):
         raise NotImplementedError("Subclass must implement abstract method")
 
+    def visit_variable_expression(self, expression: "VariableExpression"):
+        raise NotImplementedError("Subclass must implement abstract method")
+
 
 class Expression:
     def accept(self, visitor: "ExpressionVisitor"):
@@ -237,6 +243,14 @@ class UnaryExpression(Expression):
         return visitor.visit_unary_expression(self)
 
 
+class VariableExpression(Expression):
+    def __init__(self, name: Token):
+        self.name = name
+
+    def accept(self, visitor: "ExpressionVisitor"):
+        return visitor.visit_variable_expression(self)
+
+
 class GroupingExpression(Expression):
     def __init__(self, expression: Expression):
         self.expression = expression
@@ -263,6 +277,9 @@ class ExpressionPrinter(ExpressionVisitor):
 
     def visit_grouping_expression(self, expression: GroupingExpression):
         return f"(group {expression.expression.accept(self)})"
+
+    def visit_variable_expression(self, expression: VariableExpression):
+        return f"(variable {expression.name.lexeme})"
 
     def print(self, expression: Expression):
         return expression.accept(self)
@@ -376,6 +393,9 @@ class ExpressionEvaluator(ExpressionVisitor):
     def visit_grouping_expression(self, expression: GroupingExpression):
         return expression.expression.accept(self)
 
+    def visit_variable_expression(self, expression: VariableExpression):
+        return ENVIRONMENT[expression.name.lexeme]
+
     def evaluate(self, expression: Expression):
         return expression.accept(self)
 
@@ -386,10 +406,28 @@ class Parser:
         self.current = 0
 
     def parse(self):
-        statements = []
+        declarations = []
         while not self.is_at_end():
-            statements.append(self.statement())
-        return statements
+            declarations.append(self.declaration())
+        return declarations
+
+    def declaration(self):
+        if self.match("VAR"):
+            return self.variable_declaration()
+        return self.statement()
+
+    def variable_declaration(self):
+        name = self.consume("IDENTIFIER", "Expect variable name.")
+        initializer = None
+        if self.match("EQUAL"):
+            initializer = self.expression()
+        self.consume("SEMICOLON", "Expect ';' after variable declaration.")
+        return VariableDeclaration(name, initializer)
+
+    def expression_statement(self):
+        expression = self.expression()
+        self.consume("SEMICOLON", "Expect ';' after expression.")
+        return ExpressionStatement(expression)
 
     def statement(self):
         if self.match("PRINT"):
@@ -477,9 +515,13 @@ class Parser:
             self.consume("RIGHT_PAREN", "Expect ')' after expression.")
             return GroupingExpression(expression)
 
-        self.current += 1
+        if self.match("IDENTIFIER"):
+            return VariableExpression(self.previous())
 
-        if self.previous().type == "NUMBER" or self.previous().type == "STRING":
+        if self.match("NUMBER"):
+            return LiteralExpression(self.previous().literal)
+
+        if self.match("STRING"):
             return LiteralExpression(self.previous().literal)
 
         self.error(self.previous(), "Expect expression.")
@@ -555,6 +597,15 @@ class PrintStatement(Statement):
         return visitor.visit_print_statement(self)
 
 
+class VariableDeclaration(Statement):
+    def __init__(self, name: Token, initializer: Expression):
+        self.name = name
+        self.initializer = initializer
+
+    def accept(self, visitor: "Interpreter"):
+        return visitor.visit_variable_declaration(self)
+
+
 class Interpreter:
     def __init__(self):
         self.evaluator = ExpressionEvaluator()
@@ -568,6 +619,12 @@ class Interpreter:
     def visit_print_statement(self, statement: PrintStatement):
         value = self.evaluate(statement.expression)
         print_result(value)
+
+    def visit_variable_declaration(self, statement: VariableDeclaration):
+        value = None
+        if statement.initializer is not None:
+            value = self.evaluate(statement.initializer)
+        ENVIRONMENT[statement.name.lexeme] = value
 
     def interpret(self, statements: list[Statement]):
         for statement in statements:
