@@ -494,8 +494,6 @@ def print_result(result):
         print("false")
     elif isinstance(result, str):
         print(result)
-    elif result.is_integer():
-        print(int(result))
     else:
         print(result)
 
