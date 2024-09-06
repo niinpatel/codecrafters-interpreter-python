@@ -285,7 +285,13 @@ class ExpressionEvaluator(ExpressionVisitor):
         if operator == "-":
             return -right
         elif operator == "!":
-            return not right
+            if right == "true":
+                return "false"
+            elif right == "false":
+                return "true"
+            elif right == "nil":
+                return "true"
+            return "true" if not right else "false"
 
     def visit_grouping_expression(self, expression: GroupingExpression):
         return expression.expression.accept(self)
