@@ -306,7 +306,7 @@ class ExpressionEvaluator(ExpressionVisitor):
                 return -right
             else:
                 print_error("Operand must be a number.")
-                exit(1)
+                exit(70)
         elif operator == "!":
             if right == "true":
                 return "false"
