@@ -328,16 +328,14 @@ class Parser:
         return self.primary()
 
     def primary(self):
-        self.current += 1
-
         if self.match("TRUE"):
-            return LiteralExpression(True)
+            return LiteralExpression("true")
 
         if self.match("FALSE"):
-            return LiteralExpression(False)
+            return LiteralExpression("false")
 
         if self.match("NIL"):
-            return LiteralExpression(None)
+            return LiteralExpression("nil")
 
         if self.match("THIS"):
             return LiteralExpression("this")
@@ -345,6 +343,7 @@ class Parser:
         if self.match("SUPER"):
             return LiteralExpression("super")
 
+        self.current += 1
         return LiteralExpression(self.previous().literal)
 
     def consume(self, type, message):
