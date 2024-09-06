@@ -273,12 +273,6 @@ class ExpressionEvaluator(ExpressionVisitor):
             return left - right
 
     def visit_literal_expression(self, expression: LiteralExpression):
-        if expression.value == "true":
-            return True
-        if expression.value == "false":
-            return False
-        if expression.value == "nil":
-            return None
         if isinstance(expression.value, str):
             return expression.value
         if expression.value.is_integer():
