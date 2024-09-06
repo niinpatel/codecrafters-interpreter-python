@@ -276,6 +276,18 @@ class ExpressionEvaluator(ExpressionVisitor):
         elif operator == "/":
             result = left / right
             return int(result) if result.is_integer() else result
+        elif operator == "==":
+            return "true" if left == right else "false"
+        elif operator == "!=":
+            return "true" if left != right else "false"
+        elif operator == ">":
+            return "true" if left > right else "false"
+        elif operator == ">=":
+            return "true" if left >= right else "false"
+        elif operator == "<":
+            return "true" if left < right else "false"
+        elif operator == "<=":
+            return "true" if left <= right else "false"
 
     def visit_literal_expression(self, expression: LiteralExpression):
         if isinstance(expression.value, str):
