@@ -394,7 +394,11 @@ class ExpressionEvaluator(ExpressionVisitor):
         return expression.expression.accept(self)
 
     def visit_variable_expression(self, expression: VariableExpression):
-        return ENVIRONMENT[expression.name.lexeme]
+        if expression.name.lexeme in ENVIRONMENT:
+            return ENVIRONMENT[expression.name.lexeme]
+        else:
+            print_error(f"Undefined variable '{expression.name.lexeme}'.")
+            exit(70)
 
     def evaluate(self, expression: Expression):
         return expression.accept(self)

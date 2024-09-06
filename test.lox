@@ -1,14 +1,2 @@
-var a = "hello";
+
 print a;
-var world = 10;
-print world;
-var bar = 99;
-var foo = 99;
-print bar + foo;
-var quz = 99;
-print bar + foo + quz;
-var foo = (8 * (62 + 62)) / 4 + 62;
-print foo;
-var quz = 76;
-var baz = quz;
-print baz + quz;
