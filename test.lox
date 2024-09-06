@@ -1,1 +1,2 @@
-false > true
+print 12 + 24;
+print 12 + 24;

@@ -385,6 +385,19 @@ class Parser:
         self.tokens = tokens
         self.current = 0
 
+    def parse(self):
+        statements = []
+        while not self.is_at_end():
+            statements.append(self.statement())
+        return statements
+
+    def statement(self):
+        if self.match("PRINT"):
+            value = self.expression()
+            self.consume("SEMICOLON", "Expect ';' after value.")
+            return PrintStatement(value)
+        return ExpressionStatement(self.expression())
+
     def expression(self):
         return self.equality()
 
@@ -518,6 +531,46 @@ def print_result(result):
         print(result)
 
 
+class Statement:
+    def accept(self, visitor: "Interpreter"):
+        raise NotImplementedError("Subclass must implement abstract method")
+
+
+class ExpressionStatement(Statement):
+    def __init__(self, expression: Expression):
+        self.expression = expression
+
+    def accept(self, visitor: "Interpreter"):
+        return visitor.visit_expression_statement(self)
+
+
+class PrintStatement(Statement):
+    def __init__(self, expression: Expression):
+        self.expression = expression
+
+    def accept(self, visitor: "Interpreter"):
+        return visitor.visit_print_statement(self)
+
+
+class Interpreter:
+    def __init__(self):
+        self.evaluator = ExpressionEvaluator()
+
+    def evaluate(self, expression: Expression):
+        return self.evaluator.evaluate(expression)
+
+    def visit_expression_statement(self, statement: ExpressionStatement):
+        return self.evaluate(statement.expression)
+
+    def visit_print_statement(self, statement: PrintStatement):
+        value = self.evaluate(statement.expression)
+        print_result(value)
+
+    def interpret(self, statements: list[Statement]):
+        for statement in statements:
+            statement.accept(self)
+
+
 def main():
     if len(sys.argv) < 3:
         print("Usage: ./your_program.sh tokenize <filename>", file=sys.stderr)
@@ -560,6 +613,19 @@ def main():
             parser = Parser(tokens)
             expression = parser.expression()
             print_result(ExpressionEvaluator().evaluate(expression))
+            return
+
+        if command == "run":
+            scanner = Scanner(file_contents)
+            scanner.scan()
+            if scanner.had_error:
+                exit(65)
+            tokens = scanner.tokens
+
+            parser = Parser(tokens)
+            statements = parser.parse()
+            interpreter = Interpreter()
+            interpreter.interpret(statements)
             return
 
     print(f"Unknown command: {command}", file=sys.stderr)
