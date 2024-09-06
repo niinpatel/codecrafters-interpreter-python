@@ -31,6 +31,7 @@ class Scanner:
             "else": "ELSE",
             "false": "FALSE",
             "for": "FOR",
+            "fun": "FUN",
             "if": "IF",
             "nil": "NIL",
             "or": "OR",
