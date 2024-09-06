@@ -151,7 +151,8 @@ class Scanner:
             self.advance()
 
         if self.is_at_end():
-            self.error(self.line, "Unterminated string")
+            self.error(self.line, "Unterminated string.")
+            return
 
         # the closing "
         self.advance()
