@@ -70,14 +70,6 @@ class Scanner:
         elif c == "*":
             self.add_token("STAR")
         elif c == "!":
-            self.add_token("BANG")
-        elif c == "=":
-            self.add_token("EQUAL")
-        elif c == "<":
-            self.add_token("LESS")
-        elif c == ">":
-            self.add_token("GREATER")
-        elif c == "!":
             if self.match("="):
                 self.add_token("BANG_EQUAL")
             else:
