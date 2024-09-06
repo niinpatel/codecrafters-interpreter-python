@@ -128,7 +128,7 @@ class Scanner:
         if type is None:
             self.add_token("IDENTIFIER")
         else:
-            self.add_token(type)
+            self.add_token(type, text)
 
     def number(self):
         while self.peek().isdigit():
@@ -323,19 +323,19 @@ class Parser:
     def primary(self):
         self.current += 1
 
-        if self.match("true"):
+        if self.match("TRUE"):
             return LiteralExpression(True)
 
-        if self.match("false"):
+        if self.match("FALSE"):
             return LiteralExpression(False)
 
-        if self.match("nil"):
+        if self.match("NIL"):
             return LiteralExpression(None)
 
-        if self.match("this"):
+        if self.match("THIS"):
             return LiteralExpression("this")
 
-        if self.match("super"):
+        if self.match("SUPER"):
             return LiteralExpression("super")
 
         return LiteralExpression(self.previous().literal)
