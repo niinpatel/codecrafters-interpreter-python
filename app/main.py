@@ -19,7 +19,7 @@ class Scanner:
         self.start = 0
         self.current = 0
         self.line = 1
-        self.error = False
+        self.had_error = False
 
         self.keywords = {
             "and": "AND",
@@ -115,8 +115,11 @@ class Scanner:
         elif c.isalpha():
             self.identifier()
         else:
-            self.error = True
-            print(f"[line {self.line}] Error: Unexpected character: {c}")
+            self.error(self.line, "Unexpected character.")
+
+    def error(self, line, message, where=""):
+        self.had_error = True
+        print(f"[line {line}] Error{where}: {message}")
 
     def identifier(self):
         while self.peek().isalnum():
@@ -208,7 +211,7 @@ def main():
         scanner.scan()
         for token in scanner.tokens:
             print(token)
-        if scanner.error:
+        if scanner.had_error:
             exit(65)
     else:
         print(
