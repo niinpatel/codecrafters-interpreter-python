@@ -2,7 +2,7 @@ import sys
 
 
 def print_error(message):
-    sys.stderr.write(f'"{message}"\n')
+    sys.stderr.write(f"{message}\n")
 
 
 class Token:
