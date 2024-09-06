@@ -298,8 +298,8 @@ class ExpressionEvaluator(ExpressionVisitor):
                 exit(70)
             return left * right
         elif operator == "/":
-            if isinstance(left, (str, bool, None)) or isinstance(
-                right, (str, bool, None)
+            if isinstance(left, (str, bool, type(None))) or isinstance(
+                right, (str, bool, type(None))
             ):
                 print_error("Operands must be numbers.")
                 exit(70)
