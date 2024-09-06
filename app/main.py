@@ -226,6 +226,15 @@ class BinaryExpression(Expression):
         return visitor.visit_binary_expression(self)
 
 
+class AssignmentExpression(Expression):
+    def __init__(self, name: Token, value: Expression):
+        self.name = name
+        self.value = value
+
+    def accept(self, visitor: "ExpressionVisitor"):
+        return visitor.visit_assignment_expression(self)
+
+
 class LiteralExpression(Expression):
     def __init__(self, value: Any):
         self.value = value
@@ -280,6 +289,9 @@ class ExpressionPrinter(ExpressionVisitor):
 
     def visit_variable_expression(self, expression: VariableExpression):
         return f"(variable {expression.name.lexeme})"
+
+    def visit_assignment_expression(self, expression: AssignmentExpression):
+        return f"(assignment {expression.name.lexeme} {expression.value.accept(self)})"
 
     def print(self, expression: Expression):
         return expression.accept(self)
@@ -400,6 +412,11 @@ class ExpressionEvaluator(ExpressionVisitor):
             print_error(f"Undefined variable '{expression.name.lexeme}'.")
             exit(70)
 
+    def visit_assignment_expression(self, expression: AssignmentExpression):
+        value = expression.value.accept(self)
+        ENVIRONMENT[expression.name.lexeme] = value
+        return value
+
     def evaluate(self, expression: Expression):
         return expression.accept(self)
 
@@ -444,7 +461,19 @@ class Parser:
         return ExpressionStatement(expression)
 
     def expression(self):
-        return self.equality()
+        return self.assignment()
+
+    def assignment(self):
+        expression = self.equality()
+
+        if self.match("EQUAL"):
+            if isinstance(expression, VariableExpression):
+                name = expression.name
+                value = self.assignment()
+                return AssignmentExpression(name, value)
+            self.error(self.previous(), "Invalid assignment target.")
+
+        return expression
 
     def equality(self):
         expression = self.comparison()
