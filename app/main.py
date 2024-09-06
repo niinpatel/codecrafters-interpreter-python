@@ -115,7 +115,7 @@ class Scanner:
         elif c.isalpha():
             self.identifier()
         else:
-            self.error(self.line, "Unexpected character.")
+            self.error(self.line, f"Unexpected character {c}.")
 
     def error(self, line, message, where=""):
         self.had_error = True
