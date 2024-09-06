@@ -272,8 +272,14 @@ class ExpressionEvaluator(ExpressionVisitor):
         elif operator == "-":
             return left - right
         elif operator == "*":
+            if isinstance(left, str) or isinstance(right, str):
+                print_error("Operands must be numbers.")
+                exit(70)
             return left * right
         elif operator == "/":
+            if isinstance(left, str) or isinstance(right, str):
+                print_error("Operands must be numbers.")
+                exit(70)
             result = left / right
             return int(result) if result.is_integer() else result
         elif operator == "==":
