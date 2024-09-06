@@ -336,6 +336,11 @@ class Parser:
         if self.match("SUPER"):
             return LiteralExpression("super")
 
+        if self.match("LEFT_PAREN"):
+            expression = self.expression()
+            self.consume("RIGHT_PAREN", "Expect ')' after expression.")
+            return GroupingExpression(expression)
+
         self.current += 1
         return LiteralExpression(self.previous().literal)
 
