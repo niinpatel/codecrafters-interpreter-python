@@ -250,6 +250,12 @@ class ExpressionPrinter(ExpressionVisitor):
         return f"({expression.operator.lexeme} {expression.left.accept(self)} {expression.right.accept(self)})"
 
     def visit_literal_expression(self, expression: LiteralExpression):
+        if expression.value == True:
+            return "true"
+        if expression.value == False:
+            return "false"
+        if expression.value is None:
+            return "nil"
         return f"{expression.value}"
 
     def visit_unary_expression(self, expression: UnaryExpression):
@@ -289,17 +295,17 @@ class ExpressionEvaluator(ExpressionVisitor):
             result = left / right
             return int(result) if result.is_integer() else result
         elif operator == "==":
-            return "true" if left == right else "false"
+            return left == right
         elif operator == "!=":
-            return "true" if left != right else "false"
+            return left != right
         elif operator == ">":
-            return "true" if left > right else "false"
+            return left > right
         elif operator == ">=":
-            return "true" if left >= right else "false"
+            return left >= right
         elif operator == "<":
-            return "true" if left < right else "false"
+            return left < right
         elif operator == "<=":
-            return "true" if left <= right else "false"
+            return left <= right
 
     def visit_literal_expression(self, expression: LiteralExpression):
         if isinstance(expression.value, str):
@@ -320,13 +326,7 @@ class ExpressionEvaluator(ExpressionVisitor):
                 print_error("Operand must be a number.")
                 exit(70)
         elif operator == "!":
-            if right == "true":
-                return "false"
-            elif right == "false":
-                return "true"
-            elif right == "nil":
-                return "true"
-            return "true" if not right else "false"
+            return not right
 
     def visit_grouping_expression(self, expression: GroupingExpression):
         return expression.expression.accept(self)
@@ -397,13 +397,13 @@ class Parser:
 
     def primary(self):
         if self.match("TRUE"):
-            return LiteralExpression("true")
+            return LiteralExpression(True)
 
         if self.match("FALSE"):
-            return LiteralExpression("false")
+            return LiteralExpression(False)
 
         if self.match("NIL"):
-            return LiteralExpression("nil")
+            return LiteralExpression(None)
 
         if self.match("THIS"):
             return LiteralExpression("this")
