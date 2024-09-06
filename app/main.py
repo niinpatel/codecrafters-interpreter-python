@@ -141,9 +141,6 @@ class Scanner:
 
         value = float(self.source[self.start : self.current])
 
-        if value.is_integer():
-            value = int(value)
-
         self.add_token("NUMBER", value)
 
     def peek_next(self):
@@ -276,7 +273,11 @@ class ExpressionEvaluator(ExpressionVisitor):
             return left - right
 
     def visit_literal_expression(self, expression: LiteralExpression):
-        return expression.value
+        if isinstance(expression.value, str):
+            return expression.value
+        if expression.value.is_integer():
+            return int(expression.value)
+        return float(expression.value)
 
     def visit_unary_expression(self, expression: UnaryExpression):
         right = expression.right.accept(self)
