@@ -271,6 +271,10 @@ class ExpressionEvaluator(ExpressionVisitor):
             return left + right
         elif operator == "-":
             return left - right
+        elif operator == "*":
+            return left * right
+        elif operator == "/":
+            return left / right
 
     def visit_literal_expression(self, expression: LiteralExpression):
         if isinstance(expression.value, str):
