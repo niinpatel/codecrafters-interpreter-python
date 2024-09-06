@@ -19,6 +19,7 @@ class Scanner:
         self.start = 0
         self.current = 0
         self.line = 1
+        self.error = False
 
         self.keywords = {
             "and": "AND",
@@ -114,7 +115,8 @@ class Scanner:
         elif c.isalpha():
             self.identifier()
         else:
-            raise Exception(f"Unexpected character: {c}")
+            self.error = True
+            print(f"[line {self.line}] Unexpected character: {c}")
 
     def identifier(self):
         while self.peek().isalnum():
@@ -206,6 +208,8 @@ def main():
         scanner.scan()
         for token in scanner.tokens:
             print(token)
+        if scanner.error:
+            exit(65)
     else:
         print(
             "EOF  null"
