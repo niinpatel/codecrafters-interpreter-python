@@ -119,7 +119,7 @@ class Scanner:
 
     def error(self, line, message, where=""):
         self.had_error = True
-        print(f"[line N] Error{where}: {message}")
+        print(f'"[line {line}] Error{where}: {message}"')
 
     def identifier(self):
         while self.peek().isalnum():
