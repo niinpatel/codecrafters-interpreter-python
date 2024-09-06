@@ -250,9 +250,9 @@ class ExpressionPrinter(ExpressionVisitor):
         return f"({expression.operator.lexeme} {expression.left.accept(self)} {expression.right.accept(self)})"
 
     def visit_literal_expression(self, expression: LiteralExpression):
-        if expression.value == True:
+        if expression.value is True:
             return "true"
-        if expression.value == False:
+        if expression.value is False:
             return "false"
         if expression.value is None:
             return "nil"
