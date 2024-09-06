@@ -389,7 +389,7 @@ def main():
         if command == "tokenize":
             if not file_contents:
                 print("File is empty", file=sys.stderr)
-                exit(1)
+                exit(0)
 
             scanner = Scanner(file_contents)
             scanner.scan()
@@ -402,7 +402,7 @@ def main():
         if command == "parse":
             if not file_contents:
                 print("File is empty", file=sys.stderr)
-                exit(1)
+                exit(0)
 
             scanner = Scanner(file_contents)
             scanner.scan()
