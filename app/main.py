@@ -139,7 +139,12 @@ class Scanner:
             while self.peek().isdigit():
                 self.advance()
 
-        self.add_token("NUMBER", float(self.source[self.start : self.current]))
+        value = float(self.source[self.start : self.current])
+
+        if value.is_integer():
+            value = int(value)
+
+        self.add_token("NUMBER", value)
 
     def peek_next(self):
         if self.current + 1 >= len(self.source):
