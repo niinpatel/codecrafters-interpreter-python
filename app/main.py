@@ -300,7 +300,13 @@ class ExpressionEvaluator(ExpressionVisitor):
         right = expression.right.accept(self)
         operator = expression.operator.lexeme
         if operator == "-":
-            return -right
+            if isinstance(right, int):
+                return -right
+            elif isinstance(right, float):
+                return -right
+            else:
+                print_error("Operand must be a number.")
+                exit(1)
         elif operator == "!":
             if right == "true":
                 return "false"
