@@ -128,7 +128,14 @@ class Scanner:
         if type is None:
             self.add_token("IDENTIFIER")
         else:
-            self.add_token(type, text)
+            if text == "true":
+                self.add_token("TRUE", "true")
+            elif text == "false":
+                self.add_token("FALSE", "false")
+            elif text == "nil":
+                self.add_token("NIL", "nil")
+            else:
+                self.add_token(type)
 
     def number(self):
         while self.peek().isdigit():
