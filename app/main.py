@@ -265,16 +265,13 @@ class Parser:
         self.tokens = tokens
         self.current = 0
 
-    def parse(self):
-        return self.expression()
-
     def expression(self):
         return self.equality()
 
     def equality(self):
         expression = self.comparison()
 
-        while self.match("==") or self.match("!="):
+        while self.match("EQUAL_EQUAL") or self.match("BANG_EQUAL"):
             operator = self.previous()
             right = self.comparison()
             expression = BinaryExpression(expression, operator, right)
@@ -285,7 +282,10 @@ class Parser:
         expression = self.term()
 
         while (
-            self.match("<") or self.match(">") or self.match("<=") or self.match(">=")
+            self.match("GREATER")
+            or self.match("GREATER_EQUAL")
+            or self.match("LESS")
+            or self.match("LESS_EQUAL")
         ):
             operator = self.previous()
             right = self.term()
@@ -296,7 +296,7 @@ class Parser:
     def term(self):
         expression = self.factor()
 
-        while self.match("-") or self.match("+"):
+        while self.match("MINUS") or self.match("PLUS"):
             operator = self.previous()
             right = self.factor()
             expression = BinaryExpression(expression, operator, right)
@@ -306,7 +306,7 @@ class Parser:
     def factor(self):
         expression = self.unary()
 
-        while self.match("*") or self.match("/"):
+        while self.match("STAR") or self.match("SLASH"):
             operator = self.previous()
             right = self.unary()
             expression = BinaryExpression(expression, operator, right)
@@ -321,6 +321,8 @@ class Parser:
         return self.primary()
 
     def primary(self):
+        self.current += 1
+
         if self.match("true"):
             return LiteralExpression(True)
 
@@ -329,10 +331,6 @@ class Parser:
 
         if self.match("nil"):
             return LiteralExpression(None)
-
-        if self.match("("):
-            expression = self.expression()
-            return GroupingExpression(expression)
 
         if self.match("this"):
             return LiteralExpression("this")
@@ -370,6 +368,7 @@ class Parser:
     def match(self, type):
         if self.is_at_end() or self.peek().type != type:
             return False
+
         self.current += 1
         return True
 
@@ -411,8 +410,9 @@ def main():
             tokens = scanner.tokens
 
             parser = Parser(tokens)
-            expression = parser.parse()
-            print(expression)
+            expression = parser.expression()
+            print(ExpressionPrinter().print(expression))
+            return
 
     print(f"Unknown command: {command}", file=sys.stderr)
     exit(1)
