@@ -210,6 +210,7 @@ def main():
                 print(token)
             if scanner.had_error:
                 exit(65)
+            return
 
     print(f"Unknown command: {command}", file=sys.stderr)
     exit(1)
