@@ -485,6 +485,19 @@ class Parser:
         exit(65)
 
 
+def print_result(result):
+    if result is None:
+        print("nil")
+    elif result is True:
+        print("true")
+    elif result is False:
+        print("false")
+    elif result.is_integer():
+        print(int(result))
+    else:
+        print(result)
+
+
 def main():
     if len(sys.argv) < 3:
         print("Usage: ./your_program.sh tokenize <filename>", file=sys.stderr)
@@ -526,7 +539,7 @@ def main():
 
             parser = Parser(tokens)
             expression = parser.expression()
-            print(ExpressionEvaluator().evaluate(expression))
+            print_result(ExpressionEvaluator().evaluate(expression))
             return
 
     print(f"Unknown command: {command}", file=sys.stderr)
