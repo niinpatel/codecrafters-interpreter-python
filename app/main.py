@@ -387,10 +387,6 @@ def main():
         file_contents = file.read()
 
         if command == "tokenize":
-            if not file_contents:
-                print("File is empty", file=sys.stderr)
-                exit(0)
-
             scanner = Scanner(file_contents)
             scanner.scan()
             for token in scanner.tokens:
@@ -400,10 +396,6 @@ def main():
             return
 
         if command == "parse":
-            if not file_contents:
-                print("File is empty", file=sys.stderr)
-                exit(0)
-
             scanner = Scanner(file_contents)
             scanner.scan()
             tokens = scanner.tokens
