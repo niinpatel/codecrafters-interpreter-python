@@ -116,7 +116,7 @@ class Scanner:
             self.identifier()
         else:
             self.error = True
-            print(f"[line {self.line}] Unexpected character: {c}")
+            print(f"[line {self.line}] Error: Unexpected character: {c}")
 
     def identifier(self):
         while self.peek().isalnum():
