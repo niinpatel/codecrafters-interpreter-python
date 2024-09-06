@@ -306,16 +306,46 @@ class ExpressionEvaluator(ExpressionVisitor):
             result = left / right
             return int(result) if result.is_integer() else result
         elif operator == "==":
+            if isinstance(left, (str, bool, type(None))) or isinstance(
+                right, (str, bool, type(None))
+            ):
+                print_error("Operands must be numbers.")
+                exit(70)
             return left == right
         elif operator == "!=":
+            if isinstance(left, (str, bool, type(None))) or isinstance(
+                right, (str, bool, type(None))
+            ):
+                print_error("Operands must be numbers.")
+                exit(70)
             return left != right
         elif operator == ">":
+            if isinstance(left, (str, bool, type(None))) or isinstance(
+                right, (str, bool, type(None))
+            ):
+                print_error("Operands must be numbers.")
+                exit(70)
             return left > right
         elif operator == ">=":
+            if isinstance(left, (str, bool, type(None))) or isinstance(
+                right, (str, bool, type(None))
+            ):
+                print_error("Operands must be numbers.")
+                exit(70)
             return left >= right
         elif operator == "<":
+            if isinstance(left, (str, bool, type(None))) or isinstance(
+                right, (str, bool, type(None))
+            ):
+                print_error("Operands must be numbers.")
+                exit(70)
             return left < right
         elif operator == "<=":
+            if isinstance(left, (str, bool, type(None))) or isinstance(
+                right, (str, bool, type(None))
+            ):
+                print_error("Operands must be numbers.")
+                exit(70)
             return left <= right
 
     def visit_literal_expression(self, expression: LiteralExpression):
