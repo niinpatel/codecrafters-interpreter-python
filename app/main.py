@@ -342,7 +342,11 @@ class Parser:
             return GroupingExpression(expression)
 
         self.current += 1
-        return LiteralExpression(self.previous().literal)
+
+        if self.previous().type == "NUMBER" or self.previous().type == "STRING":
+            return LiteralExpression(self.previous().literal)
+
+        self.error(self.previous(), "Expect expression.")
 
     def consume(self, type, message):
         if self.check(type):
@@ -377,7 +381,8 @@ class Parser:
         return True
 
     def error(self, token, message):
-        pass
+        print_error(f"Error at '{token.lexeme}': {message}")
+        exit(65)
 
 
 def main():
@@ -403,6 +408,8 @@ def main():
         if command == "parse":
             scanner = Scanner(file_contents)
             scanner.scan()
+            if scanner.had_error:
+                exit(65)
             tokens = scanner.tokens
 
             parser = Parser(tokens)
