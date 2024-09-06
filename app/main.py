@@ -310,9 +310,19 @@ class ExpressionEvaluator(ExpressionVisitor):
     def visit_literal_expression(self, expression: LiteralExpression):
         if isinstance(expression.value, str):
             return expression.value
+        if expression.value is None:
+            return None
+        if expression.value is True:
+            return True
+        if expression.value is False:
+            return False
         if expression.value.is_integer():
             return int(expression.value)
-        return float(expression.value)
+        if isinstance(expression.value, float):
+            return float(expression.value)
+
+        # should never happen
+        return expression.value
 
     def visit_unary_expression(self, expression: UnaryExpression):
         right = expression.right.accept(self)
