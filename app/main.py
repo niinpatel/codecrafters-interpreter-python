@@ -1,6 +1,10 @@
 import sys
 
 
+def print_error(message):
+    sys.stderr.write(f'"{message}"\n')
+
+
 class Token:
     def __init__(self, type, lexeme, literal, line):
         self.type = type
@@ -119,7 +123,7 @@ class Scanner:
 
     def error(self, line, message, where=""):
         self.had_error = True
-        print(f'"[line {line}] Error{where}: {message}"')
+        print_error(f'"[line {line}] Error{where}: {message}"')
 
     def identifier(self):
         while self.peek().isalnum():
