@@ -274,7 +274,8 @@ class ExpressionEvaluator(ExpressionVisitor):
         elif operator == "*":
             return left * right
         elif operator == "/":
-            return left / right
+            result = left / right
+            return int(result) if result.is_integer() else result
 
     def visit_literal_expression(self, expression: LiteralExpression):
         if isinstance(expression.value, str):
