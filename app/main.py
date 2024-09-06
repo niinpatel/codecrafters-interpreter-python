@@ -396,7 +396,10 @@ class Parser:
             value = self.expression()
             self.consume("SEMICOLON", "Expect ';' after value.")
             return PrintStatement(value)
-        return ExpressionStatement(self.expression())
+
+        expression = self.expression()
+        self.consume("SEMICOLON", "Expect ';' after expression.")
+        return ExpressionStatement(expression)
 
     def expression(self):
         return self.equality()

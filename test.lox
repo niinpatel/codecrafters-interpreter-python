@@ -1,2 +1,2 @@
-print 12 + 24;
-print 12 + 24;
+"foo" + "bar";
+print "baz";
