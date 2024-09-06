@@ -268,6 +268,114 @@ class Parser:
     def parse(self):
         return self.expression()
 
+    def expression(self):
+        return self.equality()
+
+    def equality(self):
+        expression = self.comparison()
+
+        while self.match("==") or self.match("!="):
+            operator = self.previous()
+            right = self.comparison()
+            expression = BinaryExpression(expression, operator, right)
+
+        return expression
+
+    def comparison(self):
+        expression = self.term()
+
+        while (
+            self.match("<") or self.match(">") or self.match("<=") or self.match(">=")
+        ):
+            operator = self.previous()
+            right = self.term()
+            expression = BinaryExpression(expression, operator, right)
+
+        return expression
+
+    def term(self):
+        expression = self.factor()
+
+        while self.match("-") or self.match("+"):
+            operator = self.previous()
+            right = self.factor()
+            expression = BinaryExpression(expression, operator, right)
+
+        return expression
+
+    def factor(self):
+        expression = self.unary()
+
+        while self.match("*") or self.match("/"):
+            operator = self.previous()
+            right = self.unary()
+            expression = BinaryExpression(expression, operator, right)
+
+        return expression
+
+    def unary(self):
+        if self.match("!"):
+            operator = self.previous()
+            right = self.unary()
+            return UnaryExpression(operator, right)
+        return self.primary()
+
+    def primary(self):
+        if self.match("true"):
+            return LiteralExpression(True)
+
+        if self.match("false"):
+            return LiteralExpression(False)
+
+        if self.match("nil"):
+            return LiteralExpression(None)
+
+        if self.match("("):
+            expression = self.expression()
+            return GroupingExpression(expression)
+
+        if self.match("this"):
+            return LiteralExpression("this")
+
+        if self.match("super"):
+            return LiteralExpression("super")
+
+        return LiteralExpression(self.previous().literal)
+
+    def consume(self, type, message):
+        if self.check(type):
+            return self.advance()
+
+        self.error(self.peek(), message)
+
+    def check(self, type):
+        if self.is_at_end():
+            return False
+        return self.peek().type == type
+
+    def advance(self):
+        if not self.is_at_end():
+            self.current += 1
+        return self.previous()
+
+    def is_at_end(self):
+        return self.peek().type == "EOF"
+
+    def previous(self):
+        return self.tokens[self.current - 1]
+
+    def peek(self):
+        return self.tokens[self.current]
+
+    def match(self, type):
+        if self.is_at_end() or self.peek().type != type:
+            return False
+        self.current += 1
+        return True
+
+    def error(self, token, message):
+        pass
+
 
 def main():
     if len(sys.argv) < 3:
