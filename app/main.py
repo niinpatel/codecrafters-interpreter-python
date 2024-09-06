@@ -260,6 +260,34 @@ class ExpressionPrinter(ExpressionVisitor):
         return expression.accept(self)
 
 
+class ExpressionEvaluator(ExpressionVisitor):
+    def visit_binary_expression(self, expression: BinaryExpression):
+        left = expression.left.accept(self)
+        right = expression.right.accept(self)
+        operator = expression.operator.lexeme
+        if operator == "+":
+            return left + right
+        elif operator == "-":
+            return left - right
+
+    def visit_literal_expression(self, expression: LiteralExpression):
+        return expression.value
+
+    def visit_unary_expression(self, expression: UnaryExpression):
+        right = expression.right.accept(self)
+        operator = expression.operator.lexeme
+        if operator == "-":
+            return -right
+        elif operator == "!":
+            return not right
+
+    def visit_grouping_expression(self, expression: GroupingExpression):
+        return expression.expression.accept(self)
+
+    def evaluate(self, expression: Expression):
+        return expression.accept(self)
+
+
 class Parser:
     def __init__(self, tokens: list[Token]):
         self.tokens = tokens
@@ -415,6 +443,18 @@ def main():
             parser = Parser(tokens)
             expression = parser.expression()
             print(ExpressionPrinter().print(expression))
+            return
+
+        if command == "evaluate":
+            scanner = Scanner(file_contents)
+            scanner.scan()
+            if scanner.had_error:
+                exit(65)
+            tokens = scanner.tokens
+
+            parser = Parser(tokens)
+            expression = parser.expression()
+            print(ExpressionEvaluator().evaluate(expression))
             return
 
     print(f"Unknown command: {command}", file=sys.stderr)
