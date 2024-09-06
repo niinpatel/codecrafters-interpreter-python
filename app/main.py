@@ -381,7 +381,7 @@ class Parser:
         return True
 
     def error(self, token, message):
-        print_error(f"Error at '{token.lexeme}': {message}")
+        print_error(f"[line {token.line}] Error at '{token.lexeme}': {message}")
         exit(65)
 
 
