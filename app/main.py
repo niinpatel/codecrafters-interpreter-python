@@ -1,4 +1,5 @@
 import sys
+from typing import Any
 
 
 def print_error(message):
@@ -188,6 +189,86 @@ class Scanner:
         return self.tokens
 
 
+class ExpressionVisitor:
+    def visit_binary_expression(self, expression: "BinaryExpression"):
+        raise NotImplementedError("Subclass must implement abstract method")
+
+    def visit_literal_expression(self, expression: "LiteralExpression"):
+        raise NotImplementedError("Subclass must implement abstract method")
+
+    def visit_unary_expression(self, expression: "UnaryExpression"):
+        raise NotImplementedError("Subclass must implement abstract method")
+
+    def visit_grouping_expression(self, expression: "GroupingExpression"):
+        raise NotImplementedError("Subclass must implement abstract method")
+
+
+class Expression:
+    def accept(self, visitor: "ExpressionVisitor"):
+        raise NotImplementedError("Subclass must implement abstract method")
+
+
+class BinaryExpression(Expression):
+    def __init__(self, left: Expression, operator: Token, right: Expression):
+        self.left = left
+        self.operator = operator
+        self.right = right
+
+    def accept(self, visitor: "ExpressionVisitor"):
+        return visitor.visit_binary_expression(self)
+
+
+class LiteralExpression(Expression):
+    def __init__(self, value: Any):
+        self.value = value
+
+    def accept(self, visitor: "ExpressionVisitor"):
+        return visitor.visit_literal_expression(self)
+
+
+class UnaryExpression(Expression):
+    def __init__(self, operator: Token, right: Expression):
+        self.operator = operator
+        self.right = right
+
+    def accept(self, visitor: "ExpressionVisitor"):
+        return visitor.visit_unary_expression(self)
+
+
+class GroupingExpression(Expression):
+    def __init__(self, expression: Expression):
+        self.expression = expression
+
+    def accept(self, visitor: "ExpressionVisitor"):
+        return visitor.visit_grouping_expression(self)
+
+
+class ExpressionPrinter(ExpressionVisitor):
+    def visit_binary_expression(self, expression: BinaryExpression):
+        return f"({expression.operator.lexeme} {expression.left.accept(self)} {expression.right.accept(self)})"
+
+    def visit_literal_expression(self, expression: LiteralExpression):
+        return f"{expression.value}"
+
+    def visit_unary_expression(self, expression: UnaryExpression):
+        return f"({expression.operator.lexeme} {expression.right.accept(self)})"
+
+    def visit_grouping_expression(self, expression: GroupingExpression):
+        return f"(group {expression.expression.accept(self)})"
+
+    def print(self, expression: Expression):
+        return expression.accept(self)
+
+
+class Parser:
+    def __init__(self, tokens: list[Token]):
+        self.tokens = tokens
+        self.current = 0
+
+    def parse(self):
+        return self.expression()
+
+
 def main():
     if len(sys.argv) < 3:
         print("Usage: ./your_program.sh tokenize <filename>", file=sys.stderr)
@@ -211,6 +292,19 @@ def main():
             if scanner.had_error:
                 exit(65)
             return
+
+        if command == "parse":
+            if not file_contents:
+                print("File is empty", file=sys.stderr)
+                exit(1)
+
+            scanner = Scanner(file_contents)
+            scanner.scan()
+            tokens = scanner.tokens
+
+            parser = Parser(tokens)
+            expression = parser.parse()
+            print(expression)
 
     print(f"Unknown command: {command}", file=sys.stderr)
     exit(1)
