@@ -456,6 +456,11 @@ class Parser:
             self.consume("SEMICOLON", "Expect ';' after value.")
             return PrintStatement(value)
 
+        if self.match("LEFT_BRACE"):
+            block = self.block()
+            self.consume("RIGHT_BRACE", "Expect '}' after block.")
+            return block
+
         expression = self.expression()
         self.consume("SEMICOLON", "Expect ';' after expression.")
         return ExpressionStatement(expression)
@@ -559,6 +564,12 @@ class Parser:
 
         self.error(self.previous(), "Expect expression.")
 
+    def block(self):
+        statements = []
+        while not self.is_at_end() and not self.check("RIGHT_BRACE"):
+            statements.append(self.declaration())
+        return Block(statements)
+
     def consume(self, type, message):
         if self.check(type):
             return self.advance()
@@ -639,6 +650,14 @@ class VariableDeclaration(Statement):
         return visitor.visit_variable_declaration(self)
 
 
+class Block(Statement):
+    def __init__(self, statements: list[Statement]):
+        self.statements = statements
+
+    def accept(self, visitor: "Interpreter"):
+        return visitor.visit_block(self)
+
+
 class Interpreter:
     def __init__(self):
         self.evaluator = ExpressionEvaluator()
@@ -658,6 +677,9 @@ class Interpreter:
         if statement.initializer is not None:
             value = self.evaluate(statement.initializer)
         ENVIRONMENT[statement.name.lexeme] = value
+
+    def visit_block(self, statement: Block):
+        self.interpret(statement.statements)
 
     def interpret(self, statements: list[Statement]):
         for statement in statements:
