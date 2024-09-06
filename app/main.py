@@ -268,8 +268,14 @@ class ExpressionEvaluator(ExpressionVisitor):
         right = expression.right.accept(self)
         operator = expression.operator.lexeme
         if operator == "+":
+            if type(left) != type(right):
+                print_error("Operands must be two numbers or two strings.")
+                exit(70)
             return left + right
         elif operator == "-":
+            if type(left) != type(right):
+                print_error("Operands must be two numbers.")
+                exit(70)
             return left - right
         elif operator == "*":
             if isinstance(left, str) or isinstance(right, str):
