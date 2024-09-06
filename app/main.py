@@ -133,7 +133,7 @@ class Scanner:
             elif text == "false":
                 self.add_token("FALSE", "false")
             elif text == "nil":
-                self.add_token("NIL", "nil")
+                self.add_token("NIL", "null")
             else:
                 self.add_token(type)
 
