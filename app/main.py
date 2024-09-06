@@ -339,6 +339,10 @@ class ExpressionEvaluator(ExpressionVisitor):
         right = expression.right.accept(self)
         operator = expression.operator.lexeme
         if operator == "-":
+            if isinstance(right, (str, bool, type(None))):
+                print_error("Operand must be a number.")
+                exit(70)
+
             if isinstance(right, int):
                 return -right
             elif isinstance(right, float):
