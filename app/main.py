@@ -108,7 +108,7 @@ class Scanner:
             self.string()
         elif c.isdigit():
             self.number()
-        elif c.isalpha():
+        elif c.isalpha() or c == "_":
             self.identifier()
         else:
             self.error(self.line, f"Unexpected character: {c}")
@@ -118,7 +118,7 @@ class Scanner:
         print_error(f"[line {line}] Error{where}: {message}")
 
     def identifier(self):
-        while self.peek().isalnum():
+        while self.peek().isalnum() or self.peek() == "_":
             self.advance()
         text = self.source[self.start : self.current]
 
