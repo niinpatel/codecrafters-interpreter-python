@@ -196,25 +196,23 @@ def main():
     command = sys.argv[1]
     filename = sys.argv[2]
 
-    if command != "tokenize":
-        print(f"Unknown command: {command}", file=sys.stderr)
-        exit(1)
-
     with open(filename) as file:
         file_contents = file.read()
 
-    # Uncomment this block to pass the first stage
-    if file_contents:
-        scanner = Scanner(file_contents)
-        scanner.scan()
-        for token in scanner.tokens:
-            print(token)
-        if scanner.had_error:
-            exit(65)
-    else:
-        print(
-            "EOF  null"
-        )  # Placeholder, remove this line when implementing the scanner
+        if command == "tokenize":
+            if not file_contents:
+                print("File is empty", file=sys.stderr)
+                exit(1)
+
+            scanner = Scanner(file_contents)
+            scanner.scan()
+            for token in scanner.tokens:
+                print(token)
+            if scanner.had_error:
+                exit(65)
+
+    print(f"Unknown command: {command}", file=sys.stderr)
+    exit(1)
 
 
 if __name__ == "__main__":
