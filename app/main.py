@@ -703,15 +703,15 @@ class Interpreter:
         ENVIRONMENT[statement.name.lexeme] = value
 
     def visit_block(self, statement: Block):
-        self.execute_block(statement.statements, {})
+        self.execute_block(statement.statements)
 
-    def execute_block(self, statements: list[Statement], environment: dict):
+    def execute_block(self, statements: list[Statement]):
         global ENVIRONMENT
 
         # store the current environment in a temporary variable
         # and set the block environment to the environment variable
         previous = ENVIRONMENT
-        ENVIRONMENT = {**ENVIRONMENT, **environment}
+        ENVIRONMENT = {**ENVIRONMENT}
         try:
             for statement in statements:
                 statement.accept(self)
