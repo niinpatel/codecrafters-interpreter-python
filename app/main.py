@@ -304,33 +304,43 @@ class ExpressionEvaluator(ExpressionVisitor):
         operator = expression.operator.lexeme
         if operator == "+":
             if type(left) != type(right):
-                print_error("Operands must be two numbers or two strings.")
+                print_error(
+                    f"[line {expression.operator.line}] Operands must be two numbers or two strings."
+                )
                 exit(70)
             if isinstance(left, (bool, type(None))) or isinstance(
                 right, (bool, type(None))
             ):
-                print_error("Operands must be numbers.")
+                print_error(
+                    f"[line {expression.operator.line}] Operands must be numbers."
+                )
                 exit(70)
             return left + right
         elif operator == "-":
             if isinstance(left, (str, bool, type(None))) or isinstance(
                 right, (str, bool, type(None))
             ):
-                print_error("Operands must be numbers.")
+                print_error(
+                    f"[line {expression.operator.line}] Operands must be numbers."
+                )
                 exit(70)
             return left - right
         elif operator == "*":
             if isinstance(left, (str, bool, type(None))) or isinstance(
                 right, (str, bool, type(None))
             ):
-                print_error("Operands must be numbers.")
+                print_error(
+                    f"[line {expression.operator.line}] Operands must be numbers."
+                )
                 exit(70)
             return left * right
         elif operator == "/":
             if isinstance(left, (str, bool, type(None))) or isinstance(
                 right, (str, bool, type(None))
             ):
-                print_error("Operands must be numbers.")
+                print_error(
+                    f"[line {expression.operator.line}] Operands must be numbers."
+                )
                 exit(70)
             result = left / right
             return int(result) if result.is_integer() else result
@@ -342,28 +352,36 @@ class ExpressionEvaluator(ExpressionVisitor):
             if isinstance(left, (str, bool, type(None))) or isinstance(
                 right, (str, bool, type(None))
             ):
-                print_error("Operands must be numbers.")
+                print_error(
+                    f"[line {expression.operator.line}] Operands must be numbers."
+                )
                 exit(70)
             return left > right
         elif operator == ">=":
             if isinstance(left, (str, bool, type(None))) or isinstance(
                 right, (str, bool, type(None))
             ):
-                print_error("Operands must be numbers.")
+                print_error(
+                    f"[line {expression.operator.line}] Operands must be numbers."
+                )
                 exit(70)
             return left >= right
         elif operator == "<":
             if isinstance(left, (str, bool, type(None))) or isinstance(
                 right, (str, bool, type(None))
             ):
-                print_error("Operands must be numbers.")
+                print_error(
+                    f"[line {expression.operator.line}] Operands must be numbers."
+                )
                 exit(70)
             return left < right
         elif operator == "<=":
             if isinstance(left, (str, bool, type(None))) or isinstance(
                 right, (str, bool, type(None))
             ):
-                print_error("Operands must be numbers.")
+                print_error(
+                    f"[line {expression.operator.line}] Operands must be numbers."
+                )
                 exit(70)
             return left <= right
 
@@ -389,7 +407,9 @@ class ExpressionEvaluator(ExpressionVisitor):
         operator = expression.operator.lexeme
         if operator == "-":
             if isinstance(right, (str, bool, type(None))):
-                print_error("Operand must be a number.")
+                print_error(
+                    f"[line {expression.operator.line}] Operand must be a number."
+                )
                 exit(70)
 
             if isinstance(right, int):
@@ -397,7 +417,9 @@ class ExpressionEvaluator(ExpressionVisitor):
             elif isinstance(right, float):
                 return -right
             else:
-                print_error("Operand must be a number.")
+                print_error(
+                    f"[line {expression.operator.line}] Operand must be a number."
+                )
                 exit(70)
         elif operator == "!":
             return not right

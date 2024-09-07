@@ -1,5 +1,5 @@
-var bar = "global bar";
-var world = "global world";
+var bar = "hello";
+var world = "global world" + 1;
 var hello = "global hello";
 {
   var bar = "outer bar";
