@@ -409,7 +409,9 @@ class ExpressionEvaluator(ExpressionVisitor):
         if expression.name.lexeme in ENVIRONMENT:
             return ENVIRONMENT[expression.name.lexeme]
         else:
-            print_error(f"Undefined variable '{expression.name.lexeme}'.")
+            print_error(
+                f"[line {expression.name.line}] Undefined variable '{expression.name.lexeme}'."
+            )
             exit(70)
 
     def visit_assignment_expression(self, expression: AssignmentExpression):
@@ -687,7 +689,7 @@ class Interpreter:
         # store the current environment in a temporary variable
         # and set the block environment to the environment variable
         previous = ENVIRONMENT
-        ENVIRONMENT = environment
+        ENVIRONMENT = {**ENVIRONMENT, **environment}
         try:
             for statement in statements:
                 statement.accept(self)
